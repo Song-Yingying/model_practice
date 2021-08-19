@@ -30,6 +30,7 @@ dataset = CosmeticDataset(root=path).shuffle()
 mean = dataset.data.y.mean(dim=0, keepdim=True)
 std = dataset.data.y.std(dim=0, keepdim=True)
 dataset.data.y = (dataset.data.y - mean) / std
+dataset.data.y = dataset.data.y.squeeze(1)
 mean, std = mean[:, target].item(), std[:, target].item()
 
 # Split datasets.
@@ -87,7 +88,6 @@ def train(epoch):
         # choose suitable optimizer and process
         optimizer.zero_grad()
         # loss function is MSE Loss function
-        data.y = data.y.squeeze(1)
         loss = F.mse_loss(model(data), data.y)
         loss.backward()
         loss_all += loss.item() * data.num_graphs
